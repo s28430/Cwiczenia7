@@ -4,6 +4,11 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>3421d7bd-f391-4761-b7c4-7757bf986c20</UserSecretsId>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Services\" />
+    </ItemGroup>
 
 </Project>
