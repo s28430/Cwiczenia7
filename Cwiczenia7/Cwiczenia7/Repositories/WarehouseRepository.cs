@@ -1,3 +1,4 @@
+using System.Data.Common;
 using System.Data.SqlClient;
 using Cwiczenia7.Models;
 
@@ -112,5 +113,59 @@ public class WarehouseRepository(IConfiguration configuration) : IWarehouseRepos
         }
 
         return false;
+    }
+
+    public async Task<int> FulfillOrderAsync(int idWarehouse, int idProduct, int idOrder, int amount, double price)
+    {
+        var result = -1;
+        const string dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+        
+        var now = DateTime.Now;
+        
+        await using var conn = new SqlConnection(_configuration["conn-string"]);
+        await conn.OpenAsync();
+
+        await using var cmd = new SqlCommand();
+        cmd.Connection = conn;
+
+        await using var transaction = (SqlTransaction) await conn.BeginTransactionAsync();
+        cmd.Transaction = transaction;
+
+        cmd.CommandText = "UPDATE order " +
+                          "SET fulfilledAt = @fulfilledAt " +
+                          "WHERE idOrder = @idOrder";
+        cmd.Parameters.AddWithValue("fulfilledAt", now.ToString(dateTimeFormat));
+        cmd.Parameters.AddWithValue("idOrder", idOrder);
+
+        cmd.ExecuteNonQuery();
+        
+        cmd.Parameters.Clear();
+
+        cmd.CommandText = "INSERT INTO product_warehouse(idWarehouse, idProduct, idOrder, amount, price, createdAd) " +
+                          "VALUES(@idWarehouse, @idProduct, @idOrder, @amount, @price, @createdAd)";
+        cmd.Parameters.AddWithValue("idWarehouse", idWarehouse);
+        cmd.Parameters.AddWithValue("idProduct", idProduct);
+        cmd.Parameters.AddWithValue("idOrder", idOrder);
+        cmd.Parameters.AddWithValue("amount", amount);
+        cmd.Parameters.AddWithValue("price", price);
+        cmd.Parameters.AddWithValue("createdAt", now.ToString(dateTimeFormat));
+        
+        await cmd.ExecuteNonQueryAsync();
+        
+        cmd.Parameters.Clear();
+
+        cmd.CommandText = "SELECT SCOPE_IDENTITY()";
+        
+        try
+        {
+            result = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+        }
+        catch (SqlException ex)
+        {
+            transaction.Rollback();
+        }
+        transaction.Commit();
+
+        return result;
     }
 }

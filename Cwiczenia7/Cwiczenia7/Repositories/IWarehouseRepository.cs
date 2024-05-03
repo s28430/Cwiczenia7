@@ -8,4 +8,5 @@ public interface IWarehouseRepository
     Task<Warehouse?>? GetWarehouseByIdAsync(int id);
     Task<Order?>? GetOrderByProductIdAndAmount(int idProduct, int amount);
     Task<bool> IsOrderFulfilledAsync(int idOrder);
+    Task<int> FulfillOrderAsync(int idWarehouse, int idProduct, int idOrder, int amount, double price);
 }
