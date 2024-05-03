@@ -6,4 +6,5 @@ public interface IWarehouseRepository
 { 
     Task<Product?>? GetProductByIdAsync(int id);
     Task<Warehouse?>? GetWarehouseByIdAsync(int id);
+    Task<Order?>? GetOrderByProductIdAndAmount(int idProduct, int amount);
 }

@@ -63,4 +63,32 @@ public class WarehouseRepository(IConfiguration configuration) : IWarehouseRepos
 
         return warehouse;
     }
+
+    public async Task<Order?>? GetOrderByProductIdAndAmount(int idProduct, int amount)
+    {
+        await using var conn = new SqlConnection(_configuration["conn-string"]);
+        await conn.OpenAsync();
+
+        await using var cmd = new SqlCommand();
+        cmd.Connection = conn;
+
+        cmd.CommandText = "SELECT idOrder, idProduct, amount, createdAt, fulfilledAt " +
+                          "FROM order " +
+                          "WHERE idProduct = @idProduct AND amount = @amount";
+        cmd.Parameters.AddWithValue("idProduct", idProduct);
+        cmd.Parameters.AddWithValue("amount", amount);
+
+        await using var dr = await cmd.ExecuteReaderAsync();
+        if (!await dr.ReadAsync()) return null;
+
+        var order = new Order
+        {
+            OrderId = (int)dr["idOrder"],
+            ProductId = (int)dr["idProduct"],
+            ProductAmount = (int)dr["amount"],
+            CreatedAt = DateTime.Parse(dr["createdAt"].ToString() ?? string.Empty),
+            FulfilledAt = DateTime.Parse(dr["fulfilledAt"].ToString() ?? string.Empty)
+        };
+        return order;
+    }
 }

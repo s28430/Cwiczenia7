@@ -21,6 +21,24 @@ public class WarehouseService(IWarehouseRepository repository) : IWarehouseServi
         {
             throw new NoSuchWarehouseException($"Warehouse with id {idWarehouse} was not found.");
         }
+
+        var order = await _repository.GetOrderByProductIdAndAmount(idProduct, amount)!;
+        if (order is null)
+        {
+            throw new NoOrderForProductException($"There is no order for product with id {idProduct}.");
+        }
+
+        if (createdAt > order.CreatedAt)
+        {
+            throw new IllegalDateOfCreationException($"The product  with id {idProduct} " +
+                                                     $"was created later than the order of it.");
+        }
+
+        if (amount < 0)
+        {
+            throw new IllegalProductAmountException("Amount has to be more than zero.");
+        }
+        
         return 0;
     }
 }

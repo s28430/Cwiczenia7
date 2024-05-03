@@ -2,20 +2,20 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Cwiczenia7.Models;
 
-public class Order(int id, int amount, DateTime createdAt, DateTime fulfilledAt, int idProduct)
+public class Order
 {
     [Required]
     [Key]
-    public int OrderId { get; } = id;
+    public int OrderId { get; set; }
 
     [Required]
-    public int ProductId { get; set; } = idProduct;
+    public int ProductId { get; set; }
 
     [Required]
-    public int ProductAmount { get; set; } = amount;
+    public int ProductAmount { get; set; }
 
     [Required]
-    public DateTime CreatedAt { get; set; } = createdAt;
+    public DateTime CreatedAt { get; set; }
 
-    public DateTime FulfilledAt { get; set; } = fulfilledAt;
+    public DateTime? FulfilledAt { get; set; }
 }
