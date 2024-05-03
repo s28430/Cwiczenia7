@@ -38,6 +38,11 @@ public class WarehouseService(IWarehouseRepository repository) : IWarehouseServi
         {
             throw new IllegalProductAmountException("Amount has to be more than zero.");
         }
+
+        if (await _repository.IsOrderFulfilledAsync(order.OrderId))
+        {
+            throw new OrderAlreadyFulfilledException($"Order with id {order.OrderId} is already filfilled");
+        }
         
         return 0;
     }

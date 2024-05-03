@@ -91,4 +91,26 @@ public class WarehouseRepository(IConfiguration configuration) : IWarehouseRepos
         };
         return order;
     }
+
+    public async Task<bool> IsOrderFulfilledAsync(int idOrder)
+    {
+        await using var conn = new SqlConnection(_configuration["conn-string"]);
+        await conn.OpenAsync();
+
+        await using var cmd = new SqlCommand();
+        cmd.Connection = conn;
+
+        cmd.CommandText = "SELECT COUNT(1) AS count " +
+                          "FROM product_warehouse " +
+                          "WHERE idOrder = @idOrder";
+        cmd.Parameters.AddWithValue("idOrder", idOrder);
+        
+        await using var dr = await cmd.ExecuteReaderAsync();
+        if (await dr.ReadAsync())
+        {
+            return (int)dr["count"] > 0;
+        }
+
+        return false;
+    }
 }
