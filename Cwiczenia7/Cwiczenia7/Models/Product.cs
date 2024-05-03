@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Cwiczenia7.Models;
 
-public class Product(int id, string name, string description, double price)
+public class Product(int id, string name, string? description, double price)
 {
     [Required]
     [Key]
