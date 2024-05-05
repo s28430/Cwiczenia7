@@ -32,5 +32,19 @@ public class WarehouseController(IWarehouseService service) : ControllerBase
             return StatusCode(400, e.Message);
         }
     }
+
+    [HttpGet("zad2")]
+    public async Task<IActionResult> FulfillOrderProcedureAsync(RequestDto requestDto)
+    {
+        try
+        {
+            return Ok(await _service.FulfillOrderProcedureAsync(requestDto.WarehouseId, requestDto.ProductId,
+                requestDto.Amount, requestDto.CreatedAt));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
     
 }

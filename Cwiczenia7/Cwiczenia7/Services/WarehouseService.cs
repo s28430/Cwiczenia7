@@ -40,9 +40,19 @@ public class WarehouseService(IWarehouseRepository repository) : IWarehouseServi
 
         if (await _repository.IsOrderFulfilledAsync(order.OrderId))
         {
-            throw new OrderAlreadyFulfilledException($"Order with id {order.OrderId} is already filfilled");
+            throw new OrderAlreadyFulfilledException($"Order with id {order.OrderId} is already fulfilled");
         }
         
         return await _repository.FulfillOrderAsync(idWarehouse, idProduct, order.OrderId, amount, product.ProductPrice);
+    }
+
+    public async Task<int> FulfillOrderProcedureAsync(int idWarehouse, int idProduct, int amount, DateTime createdAt)
+    {
+        var result = await _repository.FulfillOrderProcedureAsync(idWarehouse, idProduct, amount, createdAt);
+        if (result == -1)
+        {
+            throw new Exception("A database exception occurred");
+        }
+        return await _repository.FulfillOrderProcedureAsync(idWarehouse, idProduct, amount, createdAt);
     }
 }

@@ -1,4 +1,5 @@
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using Cwiczenia7.Models;
 
@@ -188,13 +189,14 @@ public class WarehouseRepository(IConfiguration configuration) : IWarehouseRepos
         cmd.Parameters.AddWithValue("@idWarehouse", idWarehouse);
         cmd.Parameters.AddWithValue("@amount", amount);
         cmd.Parameters.AddWithValue("@createdAt", createdAt);
-
+        
         var obj = await cmd.ExecuteScalarAsync();
 
         if (obj is not null)
         {
             result = Convert.ToInt32(obj);
         }
+
 
         return result;
     }
