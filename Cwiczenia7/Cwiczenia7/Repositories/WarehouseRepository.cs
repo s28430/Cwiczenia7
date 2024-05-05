@@ -160,7 +160,7 @@ public class WarehouseRepository(IConfiguration configuration) : IWarehouseRepos
         {
             result = Convert.ToInt32(await cmd.ExecuteScalarAsync());
         }
-        catch (SqlException ex)
+        catch (SqlException)
         {
             transaction.Rollback();
         }
