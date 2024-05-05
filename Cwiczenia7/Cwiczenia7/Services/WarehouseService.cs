@@ -1,5 +1,4 @@
 using Cwiczenia7.Exceptions;
-using Cwiczenia7.Models;
 using Cwiczenia7.Repositories;
 
 namespace Cwiczenia7.Services;
@@ -44,6 +43,6 @@ public class WarehouseService(IWarehouseRepository repository) : IWarehouseServi
             throw new OrderAlreadyFulfilledException($"Order with id {order.OrderId} is already filfilled");
         }
         
-        return 0;
+        return await _repository.FulfillOrderAsync(idWarehouse, idProduct, order.OrderId, amount, product.ProductPrice);
     }
 }
