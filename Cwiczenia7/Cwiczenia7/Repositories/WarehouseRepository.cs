@@ -1,4 +1,4 @@
-using System.Data.Common;
+using System.Data;
 using System.Data.SqlClient;
 using Cwiczenia7.Models;
 
@@ -158,13 +158,43 @@ public class WarehouseRepository(IConfiguration configuration) : IWarehouseRepos
         
         try
         {
-            result = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+            var obj = await cmd.ExecuteScalarAsync();
+            if (obj is not null)
+            {
+                result = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+            }
         }
         catch (SqlException)
         {
             transaction.Rollback();
         }
         transaction.Commit();
+
+        return result;
+    }
+
+    public async Task<int> FulfillOrderProcedureAsync(int idWarehouse, int idProduct, int amount, DateTime createdAt)
+    {
+        var result = -1;
+        
+        await using var conn = new SqlConnection(_configuration["conn-string"]);
+        await conn.OpenAsync();
+
+        await using var cmd = new SqlCommand();
+        cmd.Connection = conn;
+        cmd.CommandType = CommandType.StoredProcedure;
+
+        cmd.Parameters.AddWithValue("@idProduct", idProduct);
+        cmd.Parameters.AddWithValue("@idWarehouse", idWarehouse);
+        cmd.Parameters.AddWithValue("@amount", amount);
+        cmd.Parameters.AddWithValue("@createdAt", createdAt);
+
+        var obj = await cmd.ExecuteScalarAsync();
+
+        if (obj is not null)
+        {
+            result = Convert.ToInt32(obj);
+        }
 
         return result;
     }
