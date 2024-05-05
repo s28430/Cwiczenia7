@@ -7,7 +7,7 @@ public class WarehouseService(IWarehouseRepository repository) : IWarehouseServi
 {
     private readonly IWarehouseRepository _repository = repository;
     
-    public async Task<int> AddProductToWarehouseAsync(int idProduct, int idWarehouse, int amount, DateTime createdAt)
+    public async Task<int> FulfillOrderAsync(int idProduct, int idWarehouse, int amount, DateTime createdAt)
     {
         var product = await _repository.GetProductByIdAsync(idProduct)!;
         if (product is null)

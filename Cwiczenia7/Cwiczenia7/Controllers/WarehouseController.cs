@@ -16,7 +16,7 @@ public class WarehouseController(IWarehouseService service) : ControllerBase
     {
         try
         {
-            var warehouseProductId = await _service.AddProductToWarehouseAsync(requestDto.ProductId,
+            var warehouseProductId = await _service.FulfillOrderAsync(requestDto.ProductId,
                 requestDto.WarehouseId, requestDto.Amount, requestDto.CreatedAt);
 
             return Ok(warehouseProductId);
